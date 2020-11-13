@@ -21,6 +21,8 @@ client.remove_command("help")
 ###RULE34 GRABBER
 rule34 = rule34.Rule34(asyncio.get_event_loop())
 
+previous = None
+
 @client.command(name = '8ball',
                 description = "Answers from the great beyond. (Answers a yes/no question.)",
                 aliases = ['eight_ball', 'eightball', '8-ball'])
@@ -61,14 +63,19 @@ async def r34(ctx, *args):
 @client.command(name = "e621",
                 description = "used by me to locate cheese graters. Used: e621 [keyword(s)]")
 async def e621(ctx, *args):
-    url = "https://www.e621.net/posts.json?limit=10&tags="
+    url = "https://www.e621.net/posts.json?limit=100&tags="
     keyword = '+'.join([escape(arg) for arg in args])
     url += keyword
     print("getting e621\nkeyword = " + keyword)
     headers = {'User-Agent': 'cute152DiscordBot'}
     resp = get(url, headers = headers)
     parsed = loads(resp.text)
-    await ctx.send(random.choice(parsed['posts'])['file']['url'])
+    if parsed['posts']: #if list not empty
+        choice = random.choice(parsed['posts'])
+        message = await ctx.send(choice['file']['url'])
+        await message.add_reaction("\U0001F6AB") # add the delete reaction
+    else:
+        await ctx.send("No results.")
 
 @client.command(name = "e926",
                 description = "how nice. Used: e926 [keyword(s)]")
