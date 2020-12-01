@@ -66,7 +66,7 @@ async def e621(ctx, *args):
     url = "https://www.e621.net/posts.json?limit=100&tags="
     keyword = '+'.join([html.escape(arg) for arg in args])
     url += keyword
-    print("getting e621\nkeyword = " + keyword)
+    print(f"getting e621 for '{ctx.message.author}' \nkeyword = {keyword}")
     headers = {'User-Agent': 'cute152DiscordBot'}
     resp = requests.get(url, headers=headers)
     parsed = resp.json()
@@ -112,6 +112,7 @@ async def pyramid(ctx, levels_str):
         await ctx.send(result)
     except ValueError:
         await ctx.send("That isn't a number")
+
 
 @client.command(name="imitate",
                 description="can you say that again?")
