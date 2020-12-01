@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import random
 import html
 from os import getenv
@@ -125,6 +126,14 @@ async def imitate(ctx: discord.ext.commands.Context):
 async def on_reaction_add(reaction, user):
     if not user.bot and reaction.emoji == "\U0001F6AB":
         await reaction.message.delete()
+
+
+@client.event
+async def on_message_delete(message):
+    ctx = await client.get_context(message)
+    time_since = datetime.datetime.utcnow() - message.created_at
+    if message.content.startswith('##e621 ') and time_since.total_seconds() < 30:
+        await ctx.send(f'why so quick to delete your message, {message.author.mention}?')
 
 
 # SET BOT STATE
