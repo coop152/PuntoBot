@@ -116,8 +116,9 @@ async def pyramid(ctx, levels_str):
 
 @client.command(name="imitate",
                 description="can you say that again?")
-def imitate(ctx: discord.ext.commands.Context):
-    await ctx.send(ctx.message.content)
+async def imitate(ctx: discord.ext.commands.Context):
+    retard = ctx.message.content[len('##imitate '):]
+    await ctx.send(retard)
 
 
 @client.event
