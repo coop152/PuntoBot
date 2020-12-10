@@ -127,15 +127,16 @@ async def imitate(ctx):
                 description="get a random image from my basically empty meme folder")
 async def gimme_funny(ctx):
     path = random.choice(os.listdir("D:\\Pictures\\memes"))
-    await ctx.send(file=discord.File(path))
+    await ctx.send(file=discord.File("D:\\Pictures\\memes\\" + path))
 
 
 @client.command(name="give_log",
                 description="get deleted message logs",
                 hidden=True)
-async def give_log(ctx: discord.ext.commands.context.Context):
+async def give_log(ctx):
     if ctx.author.id == 303228582740885514:
         await ctx.send(file=discord.File("deleted.log"))
+
 
 @client.event
 async def on_reaction_add(reaction, user):
