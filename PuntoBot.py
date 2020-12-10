@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import os
 import random
 import html
 from os import getenv
@@ -117,10 +118,24 @@ async def pyramid(ctx, levels_str):
 
 @client.command(name="imitate",
                 description="can you say that again?")
-async def imitate(ctx: discord.ext.commands.Context):
+async def imitate(ctx):
     retard = ctx.message.content[len('##imitate '):]
     await ctx.send(retard)
 
+
+@client.command(name="funny",
+                description="get a random image from my basically empty meme folder")
+async def gimme_funny(ctx):
+    path = random.choice(os.listdir("D:\\Pictures\\memes"))
+    await ctx.send(file=discord.File(path))
+
+
+@client.command(name="give_log",
+                description="get deleted message logs",
+                hidden=True)
+async def give_log(ctx: discord.ext.commands.context.Context):
+    if ctx.author.id == 303228582740885514:
+        await ctx.send(file=discord.File("deleted.log"))
 
 @client.event
 async def on_reaction_add(reaction, user):
@@ -129,7 +144,11 @@ async def on_reaction_add(reaction, user):
 
 
 @client.event
-async def on_message_delete(message):
+async def on_message_delete(message: discord.Message):
+    if message.author.id == 303228582740885514:  # ignore my messages :)
+        return
+    with open("deleted.log", "a") as f:
+        f.write(f"{message.author.display_name}: '{message.content}'\nDeleted at {datetime.datetime.now()}\n\n")
     ctx = await client.get_context(message)
     time_since = datetime.datetime.utcnow() - message.created_at
     if message.content.startswith('##e621 ') and time_since.total_seconds() < 30:
