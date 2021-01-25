@@ -149,7 +149,8 @@ async def on_message_delete(message: discord.Message):
     if message.author.id == 303228582740885514:  # ignore my messages :)
         return
     with open("deleted.log", "a") as f:
-        f.write(f"{message.author.display_name}: '{message.content}'\nDeleted at {datetime.datetime.now()}\n\n")
+        f.write(f"{message.author.display_name}: '{message.content}'\n")
+        f.write(f"Deleted at {datetime.datetime.now()}\n\n")
     ctx = await client.get_context(message)
     time_since = datetime.datetime.utcnow() - message.created_at
     if message.content.startswith('##e621 ') and time_since.total_seconds() < 30:
