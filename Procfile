@@ -1,1 +1,1 @@
-web: python PuntoBot.py
+worker: python PuntoBot.py
