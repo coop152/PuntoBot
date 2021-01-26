@@ -1,6 +1,5 @@
 import asyncio
-import datetime
-import os
+from datetime import datetime
 import random
 import html
 from os import getenv
@@ -42,7 +41,7 @@ async def exp(ctx, number, power):
 
 
 @client.command(name="r34",
-                description="used by war criminals to locate cheese pizza. Used: r34 [keyword]")
+                description="Used by war criminals to procure cheese pizza. Used: r34 [keyword]")
 async def r34(ctx, *args):
     keyword = ' '.join(args)
     print("getting r34\nkeyword = " + keyword)
@@ -63,7 +62,7 @@ async def r34(ctx, *args):
 
 
 @client.command(name="e621",
-                description="used by me to locate cheese graters. Used: e621 [keyword(s)]")
+                description="Used by furbys to procure cheese graters. Used: e621 [keyword(s)]")
 async def e621(ctx, *args):
     url = "https://www.e621.net/posts.json?limit=100&tags="
     keyword = '+'.join([html.escape(arg) for arg in args])
@@ -81,26 +80,27 @@ async def e621(ctx, *args):
 
 
 @client.command(name="e926",
-                description="how nice. Used: e926 [keyword(s)]")
+                description="No adults allowed in the treehouse club. Used: e926 [keyword(s)]")
 async def e926(ctx, *args):
     await e621(ctx, "rating:safe", *args)
 
 
 @client.command(name="help",
-                description="displays a list of all commands.")
+                description="Displays this list of commands.")
 async def help(ctx):
     help_message = discord.Embed(title="Help", color=0xFF8000)
     help_message.set_author(name="Jeffrey Epstein", url="https://google621.neocities.org")
     help_message.set_thumbnail(url="https://pbs.twimg.com/profile_images/1315716250706882563/Z1eDpiVY_400x400.jpg")
     for command in client.commands:
-        help_message.add_field(name=PREFIX + command.name,
-                               value=command.description if command.description else "[no description added]",
-                               inline=False)
+        if not command.hidden:
+            help_message.add_field(name=PREFIX + command.name,
+                                   value=command.description if command.description else "[no description added]",
+                                   inline=False)
     await ctx.send(embed=help_message)
 
 
 @client.command(name="pyramid",
-                description="create a sick awesome legit pyramid of teh ultamte dooom!!!!!!1!11 Used: pyramid [levels]")
+                description="create a sick awesome epic pyramid of teh ultamte dooom!!!!!!1!11 Used: pyramid [levels]")
 async def pyramid(ctx, levels_str):
     try:
         levels = int(levels_str)
@@ -113,25 +113,18 @@ async def pyramid(ctx, levels_str):
         result += "```"
         await ctx.send(result)
     except ValueError:
-        await ctx.send("That isn't a number")
+        await ctx.send("That isn't a number.")
 
 
 @client.command(name="imitate",
-                description="can you say that again?")
+                description="Can you say that again?")
 async def imitate(ctx):
     retard = ctx.message.content[len('##imitate '):]
     await ctx.send(retard)
 
 
-@client.command(name="funny",
-                description="get a random image from my basically empty meme folder")
-async def gimme_funny(ctx):
-    path = random.choice(os.listdir("D:\\Pictures\\memes"))
-    await ctx.send(file=discord.File("D:\\Pictures\\memes\\" + path))
-
-
 @client.command(name="give_log",
-                description="get deleted message logs",
+                description="Get deleted message logs",
                 hidden=True)
 async def give_log(ctx):
     if ctx.author.id == 303228582740885514:
@@ -150,9 +143,9 @@ async def on_message_delete(message: discord.Message):
         return
     with open("deleted.log", "a") as f:
         f.write(f"{message.author.display_name}: '{message.content}'\n")
-        f.write(f"Deleted at {datetime.datetime.now()}\n\n")
+        f.write(f"Deleted at {datetime.now()}\n\n")
     ctx = await client.get_context(message)
-    time_since = datetime.datetime.utcnow() - message.created_at
+    time_since = datetime.utcnow() - message.created_at
     if message.content.startswith('##e621 ') and time_since.total_seconds() < 30:
         await ctx.send(f'why so quick to delete your message, {message.author.mention}?')
 
