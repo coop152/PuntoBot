@@ -80,7 +80,7 @@ async def e621(ctx, *args):
 
 requests_log = []
 async def log_user_request(request_message, sent_message):
-    requests_log.append((request_message.user, sent_message))
+    requests_log.append((request_message.user.id, sent_message.id))
 
 @client.command(name="e926",
                 description="No adults allowed in the treehouse club. Used: e926 [keyword(s)]")
@@ -137,8 +137,8 @@ async def give_log(ctx):
 @client.event
 async def on_reaction_add(reaction, user):
     if not user.bot and reaction.emoji == "\U0001F6AB":
-        if (user, reaction.message) in requests_log:
-            requests_log.remove((user, reaction.message))
+        if (user.id, reaction.message.id) in requests_log:
+            requests_log.remove((user.id, reaction.message.id))
             await reaction.message.delete()
 
 
