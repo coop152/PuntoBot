@@ -51,7 +51,7 @@ async def r34(ctx, *args):
     else:
         choice = random.choice(results)
         message = await ctx.send(choice.file_url)
-        log_user_request(ctx.user, message)
+        log_user_request(ctx.author, message)
         await message.add_reaction("\U0001F6AB")
         try:
             await client.wait_for("message",
@@ -75,14 +75,14 @@ async def e621(ctx, *args):
     if parsed['posts']:  # if list not empty
         choice = random.choice(parsed['posts'])
         message = await ctx.send(choice['file']['url'])
-        log_user_request(ctx.user, message)
+        log_user_request(ctx.author, message)
         await message.add_reaction("\U0001F6AB")  # add the delete reaction
     else:
         await ctx.send("No results.")
 
 requests_log = []
 def log_user_request(request_user, sent_message):
-    requests_log.append((request_message.user.id, sent_message.id))
+    requests_log.append((request_user.id, sent_message.id))
 
 @client.command(name="e926",
                 description="No adults allowed in the treehouse club. Used: e926 [keyword(s)]")
