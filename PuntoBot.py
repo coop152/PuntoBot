@@ -74,7 +74,9 @@ async def e621(ctx, *args):
     parsed = resp.json()
     if parsed['posts']:  # if list not empty
         choice = random.choice(parsed['posts'])
-        message = await ctx.send(choice['file']['url'])
+        image_url = choice['file']['url']
+        if choice['rating'] != 's': image_url = f"|| {image_url} ||"
+        message = await ctx.send(image_url)
         log_user_request(ctx.author, message)
         await message.add_reaction("\U0001F6AB")  # add the delete reaction
     else:
