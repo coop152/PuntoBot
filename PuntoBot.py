@@ -11,7 +11,7 @@ import requests
 from rule34 import Rule34
 
 PREFIX = "##"
-previous_choice = {'id': -1}
+bot.previous_choice = {'id': -1}
 load_dotenv()
 TOKEN = getenv('DISCORD_TOKEN')
 # Get at discordapp.com/developers/applications/me
@@ -72,14 +72,14 @@ async def e621(ctx, *args):
     headers = {'User-Agent': 'cute152DiscordBot'}
     resp = requests.get(url, headers=headers)
     parsed = resp.json()
-    posts = [x for x in parsed['posts'] if x['id'] != previous_choice['id']]
+    posts = [x for x in parsed['posts'] if x['id'] != bot.previous_choice['id']]
     if posts:  # if list not empty
         choice = random.choice(posts)
         image_url = choice['file']['url']
         if choice['rating'] != 's': 
             image_url = f"|| {image_url} ||"
         message = await ctx.send(image_url)
-        previous_choice = choice
+        bot.previous_choice = choice
         log_user_request(ctx.author, message)
         await message.add_reaction("\U0001F6AB")  # add the delete reaction
     else:
@@ -88,11 +88,11 @@ async def e621(ctx, *args):
 @client.command(name="comments",
                 description="find the top and bottom comments of the previous esix post. has no arguments.")
 async def comments(ctx):
-    if previous_choice['id'] == -1:
+    if bot.previous_choice['id'] == -1:
         await ctx.send("The bot hasn't sent an image yet!")
     else:
         url = 'https://e621.net/comments.json?commit=Search&group_by=comment&search%5Border%5D=id_desc&search%5Bpost_tags_match%5D=id%3A'
-        url += previous_choice['id']
+        url += bot.previous_choice['id']
         headers = {'User-Agent': 'cute152DiscordBot'}
         resp = requests.get(url, headers=headers)
         parsed = resp.json()
