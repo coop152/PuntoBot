@@ -93,7 +93,7 @@ async def comments(ctx):
         await ctx.send("The bot hasn't sent an image yet!")
     else:
         url = 'https://e621.net/comments.json?commit=Search&group_by=comment&search%5Border%5D=id_desc&search%5Bpost_tags_match%5D=id%3A'
-        url += client.previous_choice['id']
+        url += str(client.previous_choice['id'])
         headers = {'User-Agent': 'cute152DiscordBot'}
         resp = requests.get(url, headers=headers)
         parsed = resp.json()
