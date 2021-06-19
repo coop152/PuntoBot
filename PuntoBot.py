@@ -61,7 +61,7 @@ async def r34(ctx, *args):
         except asyncio.TimeoutError:
             print("nobody wanted tags for " + choice.file_url)
 
-previous_choice = {'id': -1}
+previous_choice = None
 @client.command(name="e621",
                 description="Used by furbys to procure cheese graters. Used: e621 [keyword(s)]")
 async def e621(ctx, *args):
@@ -72,7 +72,7 @@ async def e621(ctx, *args):
     headers = {'User-Agent': 'cute152DiscordBot'}
     resp = requests.get(url, headers=headers)
     parsed = resp.json()
-    posts = [x for x in parsed['posts'] if x['id'] != previous_choice['id']]
+    posts = [x for x in parsed['posts'] if previous_choice != None and x['id'] != previous_choice['id']]
     if posts:  # if list not empty
         choice = random.choice(posts)
         image_url = choice['file']['url']
