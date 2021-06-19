@@ -84,6 +84,24 @@ async def e621(ctx, *args):
     else:
         await ctx.send("No results.")
 
+@client.command(name="comments",
+                description="find the top and bottom comments of the previous esix post. has no arguments.")
+async def comments(ctx):
+    if previous_choice['id'] == -1:
+        await ctx.send("No results.")
+    else:
+        url = 'https://e621.net/comments.json?commit=Search&group_by=comment&search%5Border%5D=id_desc&search%5Bpost_tags_match%5D=id%3A'
+        url += previous_choice['id']
+        headers = {'User-Agent': 'cute152DiscordBot'}
+        resp = requests.get(url, headers=headers)
+        parsed = resp.json()
+        parsed = sorted(parsed, key=lambda x:x['score'])
+        lowest_comment = parsed[0]
+        highest_comment = parsed[-1]
+        await ctx.send(f"Lowest rated comment with score {lowest_comment['score']}\n`{lowest_comment['body']}`")
+        await ctx.send(f"Highest rated comment with score {highest_comment['score']}\n`{highest_comment['body']}`")
+    
+
 requests_log = []
 def log_user_request(request_user, sent_message):
     requests_log.append((request_user.id, sent_message.id))
