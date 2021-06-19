@@ -11,7 +11,6 @@ import requests
 from rule34 import Rule34
 
 PREFIX = "##"
-client.previous_choice = {'id': -1}
 load_dotenv()
 TOKEN = getenv('DISCORD_TOKEN')
 # Get at discordapp.com/developers/applications/me
@@ -62,6 +61,8 @@ async def r34(ctx, *args):
         except asyncio.TimeoutError:
             print("nobody wanted tags for " + choice.file_url)
 
+
+client.previous_choice = {'id': -1}
 @client.command(name="e621",
                 description="Used by furbys to procure cheese graters. Used: e621 [keyword(s)]")
 async def e621(ctx, *args):
