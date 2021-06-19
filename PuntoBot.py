@@ -61,7 +61,7 @@ async def r34(ctx, *args):
         except asyncio.TimeoutError:
             print("nobody wanted tags for " + choice.file_url)
 
-previous_choice = 
+previous_choice = {}
 @client.command(name="e621",
                 description="Used by furbys to procure cheese graters. Used: e621 [keyword(s)]")
 async def e621(ctx, *args):
@@ -72,12 +72,14 @@ async def e621(ctx, *args):
     headers = {'User-Agent': 'cute152DiscordBot'}
     resp = requests.get(url, headers=headers)
     parsed = resp.json()
-    if parsed['posts']:  # if list not empty
-        choice = random.choice(parsed['posts'])
-        while choice == previous_choice and len(parsed['posts']) > 1:
-            choice = random.choice(parsed['posts'])
+    posts = parsed['posts']
+    if previous_choice in posts: 
+        posts.remove(previous_choice)
+    if posts:  # if list not empty
+        choice = random.choice(posts)
         image_url = choice['file']['url']
-        if choice['rating'] != 's': image_url = f"|| {image_url} ||"
+        if choice['rating'] != 's': 
+            image_url = f"|| {image_url} ||"
         message = await ctx.send(image_url)
         log_user_request(ctx.author, message)
         await message.add_reaction("\U0001F6AB")  # add the delete reaction
