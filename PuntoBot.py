@@ -11,7 +11,7 @@ import requests
 from rule34 import Rule34
 
 PREFIX = "##"
-previous_choice = {'id' = -1}
+previous_choice = {'id': -1}
 load_dotenv()
 TOKEN = getenv('DISCORD_TOKEN')
 # Get at discordapp.com/developers/applications/me
