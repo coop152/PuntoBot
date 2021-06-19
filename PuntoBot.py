@@ -72,9 +72,7 @@ async def e621(ctx, *args):
     headers = {'User-Agent': 'cute152DiscordBot'}
     resp = requests.get(url, headers=headers)
     parsed = resp.json()
-    posts = parsed['posts']
-    if previous_choice in posts: 
-        posts.remove(previous_choice)
+    posts = [x for x in parsed['posts'] if x['id'] != previous_choice['id']]
     if posts:  # if list not empty
         choice = random.choice(posts)
         image_url = choice['file']['url']
