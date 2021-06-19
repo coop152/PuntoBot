@@ -61,7 +61,7 @@ async def r34(ctx, *args):
         except asyncio.TimeoutError:
             print("nobody wanted tags for " + choice.file_url)
 
-
+previous_choice = 
 @client.command(name="e621",
                 description="Used by furbys to procure cheese graters. Used: e621 [keyword(s)]")
 async def e621(ctx, *args):
@@ -74,6 +74,8 @@ async def e621(ctx, *args):
     parsed = resp.json()
     if parsed['posts']:  # if list not empty
         choice = random.choice(parsed['posts'])
+        while choice == previous_choice and len(parsed['posts']) > 1:
+            choice = random.choice(parsed['posts'])
         image_url = choice['file']['url']
         if choice['rating'] != 's': image_url = f"|| {image_url} ||"
         message = await ctx.send(image_url)
