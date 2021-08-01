@@ -5,7 +5,7 @@ import html
 from os import getenv
 
 import discord
-from discord.ext.commands import Bot, Embed
+from discord.ext.commands import Bot
 from dotenv import load_dotenv
 import requests
 from rule34 import Rule34
@@ -79,7 +79,7 @@ async def e621(ctx, *args):
         image_url = choice['file']['url']
         #if choice['rating'] != 's': 
         #    image_url = f"|| {image_url} ||"
-        e6_embed = Embed.from_dict({
+        e6_embed = discord.Embed.from_dict({
           "type": "rich",
           "title": "e621 Link",
           "description": "**You searched for:** " + ' '.join([html.escape(arg) for arg in args]),
