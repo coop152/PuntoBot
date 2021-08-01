@@ -81,29 +81,29 @@ async def e621(ctx, *args):
             image_url = f"|| {image_url} ||"
         e6_embed = Embed.from_dict({
           "type": "rich",
-          "title": `e621 Link`,
-          "description": `**You searched for:** tags go here`,
+          "title": "e621 Link",
+          "description": "**You searched for:** tags go here",
           "color": 0xfdb328,
           "fields": [
             {
-              "name": `Artist`,
-              "value": `JoeMama_(artist)`
+              "name": "Artist",
+              "value": "JoeMama_(artist)"
             }
           ],
           "image": {
-            "url": `http://www.spicyauctiontemplates.com/samples/blue/insertimagehere.gif`,
+            "url": "http://www.spicyauctiontemplates.com/samples/blue/insertimagehere.gif",
             "height": 0,
             "width": 0
           },
           "thumbnail": {
-            "url": `https://i.kym-cdn.com/entries/icons/original/000/016/852/e612.png`,
+            "url": "https://i.kym-cdn.com/entries/icons/original/000/016/852/e612.png",
             "height": 0,
             "width": 0
           },
           "author": {
-            "name": `Punto coming to the rescue:`
+            "name": "Punto coming to the rescue:"
           },
-          "url": `http://www.e621.net/posts/12345`
+          "url": "http://www.e621.net/posts/12345"
         })
         message = await ctx.send(image_url, embed=e6_embed)
         client.previous_choice = choice
