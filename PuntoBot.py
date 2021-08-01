@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 import requests
 from rule34 import Rule34
 
-PREFIX = "##"
+PREFIX = "=="
 load_dotenv()
 TOKEN = getenv('DISCORD_TOKEN')
 # Get at discordapp.com/developers/applications/me
