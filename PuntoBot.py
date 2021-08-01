@@ -5,7 +5,7 @@ import html
 from os import getenv
 
 import discord
-from discord.ext.commands import Bot
+from discord.ext.commands import Bot, Embed
 from dotenv import load_dotenv
 import requests
 from rule34 import Rule34
@@ -77,33 +77,33 @@ async def e621(ctx, *args):
     if posts:  # if list not empty
         choice = random.choice(posts)
         image_url = choice['file']['url']
-        if choice['rating'] != 's': 
-            image_url = f"|| {image_url} ||"
+        #if choice['rating'] != 's': 
+        #    image_url = f"|| {image_url} ||"
         e6_embed = Embed.from_dict({
           "type": "rich",
           "title": "e621 Link",
-          "description": "**You searched for:** tags go here",
+          "description": "**You searched for:** " + ' '.join([html.escape(arg) for arg in args]),
           "color": 0xfdb328,
           "fields": [
             {
-              "name": "Artist",
-              "value": "JoeMama_(artist)"
+              "name": "Artist(s)",
+              "value": ' '.join(choice["tags"]["artist"])
             }
           ],
           "image": {
-            "url": "http://www.spicyauctiontemplates.com/samples/blue/insertimagehere.gif",
+            "url": image_url,
             "height": 0,
             "width": 0
           },
           "thumbnail": {
-            "url": "https://i.kym-cdn.com/entries/icons/original/000/016/852/e612.png",
+            "url": "https://en.wikifur.com/w/images/d/dd/E621Logo.png",
             "height": 0,
             "width": 0
           },
           "author": {
             "name": "Punto coming to the rescue:"
           },
-          "url": "http://www.e621.net/posts/12345"
+          "url": "http://www.e621.net/posts/" + choice["id"]
         })
         message = await ctx.send(image_url, embed=e6_embed)
         client.previous_choice = choice
