@@ -103,7 +103,7 @@ async def e621(ctx, *args):
           "author": {
             "name": "Punto coming to the rescue:"
           },
-          "url": "http://www.e621.net/posts/" + choice["id"]
+          "url": f"http://www.e621.net/posts/{choice['id']}"
         })
         message = await ctx.send(image_url, embed=e6_embed)
         client.previous_choice = choice
