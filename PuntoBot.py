@@ -101,11 +101,11 @@ async def e621(ctx, *args):
             "width": 0
           },
           "author": {
-            "name": "Punto coming to the rescue:"
+            "name": "Punto to the rescue:"
           },
           "url": f"http://www.e621.net/posts/{choice['id']}"
         })
-        message = await ctx.send(image_url, embed=e6_embed)
+        message = await ctx.send(embed=e6_embed)
         client.previous_choice = choice
         log_user_request(ctx.author, message)
         await message.add_reaction("\U0001F6AB")  # add the delete reaction
