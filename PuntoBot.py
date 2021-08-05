@@ -11,6 +11,7 @@ import requests
 from rule34 import Rule34
 
 PREFIX = "=="
+DELETE_EMOJI = "\U0001F6AB"
 load_dotenv()
 TOKEN = getenv('DISCORD_TOKEN')
 # Get at discordapp.com/developers/applications/me
@@ -27,7 +28,7 @@ rule34 = Rule34(asyncio.get_event_loop())
 async def eight_ball(ctx):
     with open("8ball.txt", "r") as file:
         responses = file.readlines()
-    await ctx.send(f"{random.choice(responses)}, {ctx.message.author.mention}")
+    await ctx.send(f"{random.choice(responses).strip()}, {ctx.message.author.mention}")
 
 
 @client.command(name="exp",
@@ -39,27 +40,47 @@ async def exp(ctx, number, power):
     except ValueError:
         await ctx.send("Not a number!")
 
+client.make_search_result_embed = lambda title_name, tags, artists, image_url, logo_url, post_url : {
+          "type": "rich",
+          "title": f"{title_name} Link",
+          "description": "**You searched for:** " + ' '.join([html.escape(tag) for tag in tags]),
+          "color": 0xfdb328,
+          "fields": [
+            {
+              "name": "Artist(s)",
+              "value": ' '.join(artists)
+            }
+          ],
+          "image": {
+            "url": image_url,
+            "height": 0,
+            "width": 0
+          },
+          "thumbnail": {
+            "url": logo_url,
+            "height": 0,
+            "width": 0
+          },
+          "author": {
+            "name": "Punto to the rescue:"
+          },
+          "url": post_url
+        }
 
 @client.command(name="r34",
                 description="Used by war criminals to procure cheese pizza. Used: r34 [keyword]")
 async def r34(ctx, *args):
     keyword = ' '.join(args)
-    print("getting r34\nkeyword = " + keyword)
+    #print("getting r34\nkeyword = " + keyword)
     results = await rule34.getImages(keyword)
     if results is None:
         await ctx.send("No results.")
     else:
         choice = random.choice(results)
-        message = await ctx.send(choice.file_url)
+        r34_embed = client.make_search_result_embed("r34", args, "r34 doesn't say", choice.file_url, f"https://static.wikia.nocookie.net/joke-battles/images/2/24/Rule34_logo.png", f"https://rule34.xxx/index.php?page=post&s=view&id={choice.id}"
+        message = await ctx.send(embed=r34_embed)
         log_user_request(ctx.author, message)
-        await message.add_reaction("\U0001F6AB")
-        try:
-            await client.wait_for("message",
-                                  check=lambda r: r.content in ("tags", "tags?", "tag", "tag?"))
-            message = await ctx.send(f"tags: `{', '.join(choice.tags)}`")
-            await message.add_reaction("\U0001F6AB")
-        except asyncio.TimeoutError:
-            print("nobody wanted tags for " + choice.file_url)
+        await message.add_reaction(DELETE_EMOJI)
 
 
 client.previous_choice = {'id': -1}
@@ -79,36 +100,11 @@ async def e621(ctx, *args):
         image_url = choice['file']['url']
         #if choice['rating'] != 's': 
         #    image_url = f"|| {image_url} ||"
-        e6_embed = discord.Embed.from_dict({
-          "type": "rich",
-          "title": "e621 Link",
-          "description": "**You searched for:** " + ' '.join([html.escape(arg) for arg in args]),
-          "color": 0xfdb328,
-          "fields": [
-            {
-              "name": "Artist(s)",
-              "value": ' '.join(choice["tags"]["artist"])
-            }
-          ],
-          "image": {
-            "url": image_url,
-            "height": 0,
-            "width": 0
-          },
-          "thumbnail": {
-            "url": "https://en.wikifur.com/w/images/d/dd/E621Logo.png",
-            "height": 0,
-            "width": 0
-          },
-          "author": {
-            "name": "Punto to the rescue:"
-          },
-          "url": f"http://www.e621.net/posts/{choice['id']}"
-        })
+        e6_embed = client.make_search_result_embed("e621", args, choice["tags"]["artist"], image_url, "https://en.wikifur.com/w/images/d/dd/E621Logo.png", f"http://www.e621.net/posts/{choice['id']}")
         message = await ctx.send(embed=e6_embed)
         client.previous_choice = choice
         log_user_request(ctx.author, message)
-        await message.add_reaction("\U0001F6AB")  # add the delete reaction
+        await message.add_reaction(DELETE_EMOJI)  # add the delete reaction
     else:
         await ctx.send("No results.")
 
@@ -123,11 +119,14 @@ async def comments(ctx):
         headers = {'User-Agent': 'cute152DiscordBot'}
         resp = requests.get(url, headers=headers)
         parsed = resp.json()
-        parsed = sorted(parsed, key=lambda x:x['score'])
-        lowest_comment = parsed[0]
-        highest_comment = parsed[-1]
-        await ctx.send(f"Lowest rated comment with score {lowest_comment['score']}\n`{lowest_comment['body']}`")
-        await ctx.send(f"Highest rated comment with score {highest_comment['score']}\n`{highest_comment['body']}`")
+        if "comments" in parsed:
+            ctx.send("Post has no comments.")
+        else:
+            parsed = sorted(parsed, key=lambda x:x['score'])
+            lowest_comment = parsed[0]
+            highest_comment = parsed[-1]
+            await ctx.send(f"Lowest rated comment with score {lowest_comment['score']}\n`{lowest_comment['body']}`")
+            await ctx.send(f"Highest rated comment with score {highest_comment['score']}\n`{highest_comment['body']}`")
     
 
 requests_log = []
@@ -188,7 +187,7 @@ async def give_log(ctx):
 
 @client.event
 async def on_reaction_add(reaction, user):
-    if not user.bot and reaction.emoji == "\U0001F6AB":
+    if not user.bot and reaction.emoji == DELETE_EMOJI:
         if (user.id, reaction.message.id) in requests_log:
             requests_log.remove((user.id, reaction.message.id))
             await reaction.message.delete()
