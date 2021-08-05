@@ -79,7 +79,7 @@ async def r34(ctx, *args):
         choice = random.choice(results)
         r34_embed = client.make_search_result_embed("r34", 
             args, 
-            "r34 doesn't give it lol", 
+            ["r34 doesn't give artists lol"], 
             choice.file_url, 
             f"https://static.wikia.nocookie.net/joke-battles/images/2/24/Rule34_logo.png", 
             f"https://rule34.xxx/index.php?page=post&s=view&id={choice.id}")
