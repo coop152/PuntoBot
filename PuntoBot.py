@@ -125,7 +125,7 @@ async def comments(ctx):
         resp = requests.get(url, headers=headers)
         parsed = resp.json()
         if "comments" in parsed:
-            ctx.send("Post has no comments.")
+            await ctx.send("Post has no comments.")
         else:
             parsed = sorted(parsed, key=lambda x:x['score'])
             lowest_comment = parsed[0]
