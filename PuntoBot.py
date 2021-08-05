@@ -40,7 +40,7 @@ async def exp(ctx, number, power):
     except ValueError:
         await ctx.send("Not a number!")
 
-client.make_search_result_embed = lambda title_name, tags, artists, image_url, logo_url, post_url : {
+client.make_search_result_embed = lambda title_name, tags, artists, image_url, logo_url, post_url : Embed.from_dict{
           "type": "rich",
           "title": f"{title_name} Link",
           "description": "**You searched for:** " + ' '.join([html.escape(tag) for tag in tags]),
