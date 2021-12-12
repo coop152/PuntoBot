@@ -45,4 +45,4 @@ def make_zorn():
     fetishes = ' '.join(fetishes)
     final_word = random.choice(FINAL_WORD)
     pairing = make_pairing()
-    return f"{pairing} {fetishes} {final_word}"
+    return f"{pairing} {fetishes} {final_word}" if fetishes != "" else f"{pairing} {final_word}"
