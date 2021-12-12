@@ -3,6 +3,7 @@ from datetime import datetime
 import random
 import html
 from os import getenv
+import yiffgen
 
 import discord
 from discord.ext.commands import Bot
@@ -133,6 +134,11 @@ async def comments(ctx):
             await ctx.send(f"Lowest rated comment with score {lowest_comment['score']}\n`{lowest_comment['body']}`")
             await ctx.send(f"Highest rated comment with score {highest_comment['score']}\n`{highest_comment['body']}`")
     
+@client.command(name="zorn",
+                description="for when you cant decide what kind of zorn youre going to zerk off to")
+async def zorn_generator(ctx):
+    await ctx.send(yiffgen.make_zorn())
+
 
 requests_log = []
 def log_user_request(request_user, sent_message):
