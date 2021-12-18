@@ -142,7 +142,7 @@ async def zorn_generator(ctx):
 @client.command(name="ship",
                 description="hottest new ship on the internet")
 async def zorn_generator(ctx):
-    await ctx.send(yiffgen.make_pairing(2, 2))
+    await ctx.send(yiffgen.make_pairing(1, 3))
 
 
 requests_log = []
