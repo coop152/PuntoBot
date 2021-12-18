@@ -4,9 +4,27 @@ CHARACTERS = [
     "typhlosion",
     "pikachu",
     "charizard",
-    ""
+    "falco lombardi",
+    "star fox",
+    "slippy frog",
+    "pepe le pew",
+    "mario",
+    "hercules",
+    "kanye west",
+    "le bron james",
+    "michael jordon",
+    "obama",
+    "peter kay",
+    "sans",
+    "sonic the hedgehog",
+    "shadow the hedgehog",
     "rouge the bat",
-    "falco",
+    "tails miles prower",
+    "knuckles the echidna",
+    "dr. robotnik",
+    "silver the hedgehog",
+    "jerma985",
+    "james cordon"
 ]
 ADJECTIVES = [
     "",
@@ -14,6 +32,14 @@ ADJECTIVES = [
     "futa",
     "genderbent",
     "obese",
+    "macro",
+    "catboy",
+    "anthro",
+    "feral",
+    "shortstack",
+    "paedophile",
+    "sleeping"
+    
 ]
 ADJ_WEIGHTS = [0.9] + [0.9 / (len(ADJECTIVES) - 1)] * (len(ADJECTIVES) - 1)
 FETISHES = [
@@ -23,12 +49,20 @@ FETISHES = [
     "forced",
     "petrification",
     "transformation",
+    "identity death",
+    "necrophilia",
+    "vore",
+    "watersports",
+    "scat",
+    "mpreg",
+    "hypnotism",
+    "portal"
 ]
 FINAL_WORD = [
     "porn",
     "zorn",
     "yiff",
-    "hentai",
+    "hentai"
 ]
 
 
@@ -46,3 +80,7 @@ def make_zorn():
     final_word = random.choice(FINAL_WORD)
     pairing = make_pairing()
     return f"{pairing} {fetishes} {final_word}" if fetishes != "" else f"{pairing} {final_word}"
+
+
+if __name__ == "__main__":
+    print(make_zorn())
