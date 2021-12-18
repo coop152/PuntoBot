@@ -66,8 +66,8 @@ FINAL_WORD = [
 ]
 
 
-def make_pairing():
-    character_count = random.randint(1, 2)
+def make_pairing(low_bound, high_bound):
+    character_count = random.randint(low_bound, high_bound)
     characters = random.choices(CHARACTERS, k=character_count)
     adjectives = random.choices(ADJECTIVES, ADJ_WEIGHTS, k=character_count)
     names = [c if a == "" else f"{a} {c}" for c, a in zip(characters, adjectives)]
@@ -78,7 +78,7 @@ def make_zorn():
     fetishes = random.sample(FETISHES, k=fetish_count)
     fetishes = ' '.join(fetishes)
     final_word = random.choice(FINAL_WORD)
-    pairing = make_pairing()
+    pairing = make_pairing(1, 2)
     return f"{pairing} {fetishes} {final_word}" if fetishes != "" else f"{pairing} {final_word}"
 
 
