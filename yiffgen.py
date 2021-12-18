@@ -19,7 +19,7 @@ CHARACTERS = [
     "sonic the hedgehog",
     "shadow the hedgehog",
     "rouge the bat",
-    "tails miles prower",
+    "miles \"tails\" prower",
     "knuckles the echidna",
     "dr. robotnik",
     "silver the hedgehog",
