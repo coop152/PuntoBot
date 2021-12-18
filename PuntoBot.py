@@ -139,6 +139,11 @@ async def comments(ctx):
 async def zorn_generator(ctx):
     await ctx.send(yiffgen.make_zorn())
 
+@client.command(name="ship",
+                description="hottest new ship on the internet")
+async def zorn_generator(ctx):
+    await ctx.send(yiffgen.make_pairing())
+
 
 requests_log = []
 def log_user_request(request_user, sent_message):
