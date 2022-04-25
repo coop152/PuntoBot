@@ -73,6 +73,7 @@ FINAL_WORD = [
 
 pogg_ing = False
 def make_pairing(low_bound, high_bound):
+    global pogg_ing
     character_count = random.randint(low_bound, high_bound)
     if pogg_ing:
         character_count = 2
