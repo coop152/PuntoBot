@@ -141,9 +141,20 @@ async def zorn_generator(ctx):
 
 @client.command(name="ship",
                 description="hottest new ship on the internet")
-async def zorn_generator(ctx):
-    await ctx.send(yiffgen.make_pairing(1, 3))
+async def ship_generator(ctx):
+    pairing = yiffgen.make_pairing(1, 3)
+    if yiffgen.pogg_ing:
+        pairing += "\nOMG best ship!!!! i FUCKING LOVE typhlosion x feraligatr its so awesome typhlosion is such an EPIC POWER BOTTOM!!!"
+    await ctx.send(pairing)
+    if yiffgen.pogg_ing:
+        await e621(ctx, "typhlosion", "feraligatr", "order:score")
+        yiffgen.pogg_ing = False
 
+@client.command(name="forcepog",
+                description="aaaaaaaaa",
+                hidden=True)
+async def forcepog(ctx):
+    yiffgen.pogg_ing = True
 
 requests_log = []
 def log_user_request(request_user, sent_message):
