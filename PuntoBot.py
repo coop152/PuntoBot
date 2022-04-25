@@ -147,7 +147,7 @@ async def ship_generator(ctx):
         pairing += "\nOMG best ship!!!! i FUCKING LOVE typhlosion x feraligatr its so awesome typhlosion is such an EPIC POWER BOTTOM!!!"
     await ctx.send(pairing)
     if yiffgen.pogg_ing:
-        await e621(ctx, "typhlosion", "feraligatr", "order:score")
+        await e621(ctx, "typhlosion", "feraligatr", "order:score", "rating:explicit")
         yiffgen.pogg_ing = False
 
 @client.command(name="forcepog",
