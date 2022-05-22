@@ -41,32 +41,33 @@ async def exp(ctx, number, power):
     except ValueError:
         await ctx.send("Not a number!")
 
-client.make_search_result_embed = lambda title_name, tags, artists, image_url, logo_url, post_url : discord.Embed.from_dict({
-          "type": "rich",
-          "title": f"{title_name} Link",
-          "description": "**You searched for:** " + ' '.join([html.escape(tag) for tag in tags]),
-          "color": 0xfdb328,
-          "fields": [
-            {
-              "name": "Artist(s)",
-              "value": ' '.join(artists)
-            }
-          ],
-          "image": {
-            "url": image_url,
-            "height": 0,
-            "width": 0
-          },
-          "thumbnail": {
-            "url": logo_url,
-            "height": 0,
-            "width": 0
-          },
-          "author": {
-            "name": "Punto to the rescue:"
-          },
-          "url": post_url
-        })
+client.make_search_result_embed = lambda title_name, tags, artists, image_url, logo_url, post_url: discord.Embed.from_dict({
+    "type": "rich",
+    "title": f"{title_name} Link",
+    "description": "**You searched for:** " + ' '.join([html.escape(tag) for tag in tags]),
+    "color": 0xfdb328,
+    "fields": [
+        {
+            "name": "Artist(s)",
+            "value": ' '.join(artists)
+        }
+    ],
+    "image": {
+        "url": image_url,
+        "height": 0,
+        "width": 0
+    },
+    "thumbnail": {
+        "url": logo_url,
+        "height": 0,
+        "width": 0
+    },
+    "author": {
+        "name": "Punto to the rescue:"
+    },
+    "url": post_url
+})
+
 
 @client.command(name="r34",
                 description="Used by war criminals to procure cheese pizza. Used: r34 [keyword]")
@@ -78,18 +79,20 @@ async def r34(ctx, *args):
         await ctx.send("No results.")
     else:
         choice = random.choice(results)
-        r34_embed = client.make_search_result_embed("r34", 
-            args, 
-            ["r34 doesn't give artists lol"], 
-            choice.file_url, 
-            f"https://static.wikia.nocookie.net/joke-battles/images/2/24/Rule34_logo.png", 
-            f"https://rule34.xxx/index.php?page=post&s=view&id={choice.id}")
+        r34_embed = client.make_search_result_embed("r34",
+                                                    args,
+                                                    ["r34 doesn't give artists lol"],
+                                                    choice.file_url,
+                                                    f"https://static.wikia.nocookie.net/joke-battles/images/2/24/Rule34_logo.png",
+                                                    f"https://rule34.xxx/index.php?page=post&s=view&id={choice.id}")
         message = await ctx.send(embed=r34_embed)
         log_user_request(ctx.author, message)
         await message.add_reaction(DELETE_EMOJI)
 
 
 client.previous_choice = {'id': -1}
+
+
 @client.command(name="e621",
                 description="Used by furbys to procure cheese graters. Used: e621 [keyword(s)]")
 async def e621(ctx, *args):
@@ -100,19 +103,22 @@ async def e621(ctx, *args):
     headers = {'User-Agent': 'cute152DiscordBot'}
     resp = requests.get(url, headers=headers)
     parsed = resp.json()
-    posts = [x for x in parsed['posts'] if x['id'] != client.previous_choice['id']]
+    posts = [x for x in parsed['posts'] if x['id']
+             != client.previous_choice['id']]
     if posts:  # if list not empty
         choice = random.choice(posts)
         image_url = choice['file']['url']
-        #if choice['rating'] != 's': 
+        # if choice['rating'] != 's':
         #    image_url = f"|| {image_url} ||"
-        e6_embed = client.make_search_result_embed("e621", args, choice["tags"]["artist"], image_url, "https://en.wikifur.com/w/images/d/dd/E621Logo.png", f"http://www.e621.net/posts/{choice['id']}")
+        e6_embed = client.make_search_result_embed(
+            "e621", args, choice["tags"]["artist"], image_url, "https://en.wikifur.com/w/images/d/dd/E621Logo.png", f"http://www.e621.net/posts/{choice['id']}")
         message = await ctx.send(embed=e6_embed)
         client.previous_choice = choice
         log_user_request(ctx.author, message)
         await message.add_reaction(DELETE_EMOJI)  # add the delete reaction
     else:
         await ctx.send("No results.")
+
 
 @client.command(name="comments",
                 description="find the top and bottom comments of the previous esix post. has no arguments.")
@@ -128,16 +134,24 @@ async def comments(ctx):
         if "comments" in parsed:
             await ctx.send("Post has no comments.")
         else:
-            parsed = sorted(parsed, key=lambda x:x['score'])
+            parsed = sorted(parsed, key=lambda x: x['score'])
             lowest_comment = parsed[0]
             highest_comment = parsed[-1]
             await ctx.send(f"Lowest rated comment with score {lowest_comment['score']}\n`{lowest_comment['body']}`")
             await ctx.send(f"Highest rated comment with score {highest_comment['score']}\n`{highest_comment['body']}`")
-    
+
+
 @client.command(name="zorn",
                 description="for when you cant decide what kind of zorn youre going to zerk off to")
 async def zorn_generator(ctx):
-    await ctx.send(yiffgen.make_zorn())
+    zorn = yiffgen.make_zorn()
+    if yiffgen.pogg_ing:
+        zorn += "\nOMG best ship!!!! i FUCKING LOVE typhlosion x feraligatr its so awesome typhlosion is such an EPIC POWER BOTTOM!!!"
+    await ctx.send(zorn)
+    if yiffgen.pogg_ing:
+        await e621(ctx, "typhlosion", "feraligatr", "order:score", "rating:explicit")
+        yiffgen.pogg_ing = False
+
 
 @client.command(name="ship",
                 description="hottest new ship on the internet")
@@ -150,6 +164,7 @@ async def ship_generator(ctx):
         await e621(ctx, "typhlosion", "feraligatr", "order:score", "rating:explicit")
         yiffgen.pogg_ing = False
 
+
 @client.command(name="forcepog",
                 description="aaaaaaaaa",
                 hidden=True)
@@ -157,8 +172,11 @@ async def forcepog(ctx):
     yiffgen.pogg_ing = True
 
 requests_log = []
+
+
 def log_user_request(request_user, sent_message):
     requests_log.append((request_user.id, sent_message.id))
+
 
 @client.command(name="e926",
                 description="No adults allowed in the treehouse club. Used: e926 [keyword(s)]")
@@ -170,8 +188,10 @@ async def e926(ctx, *args):
                 description="Displays this list of commands.")
 async def help(ctx):
     help_message = discord.Embed(title="Help", color=0xFF8000)
-    help_message.set_author(name="Jeffrey Epstein", url="https://google621.neocities.org")
-    help_message.set_thumbnail(url="https://pbs.twimg.com/profile_images/1315716250706882563/Z1eDpiVY_400x400.jpg")
+    help_message.set_author(name="Jeffrey Epstein",
+                            url="https://google621.neocities.org")
+    help_message.set_thumbnail(
+        url="https://pbs.twimg.com/profile_images/1315716250706882563/Z1eDpiVY_400x400.jpg")
     for command in client.commands:
         if not command.hidden:
             help_message.add_field(name=PREFIX + command.name,
