@@ -97,10 +97,10 @@ client.previous_choice = {'id': -1}
                 description="Used by furbys to procure cheese graters. Used: e621 [keyword(s)]")
 async def e621(ctx, *args):
     url = "https://www.e621.net/posts.json?limit=100&tags="
+    headers = {'User-Agent': 'cute152DiscordBot'}
     keyword = '+'.join([html.escape(arg) for arg in args])
     url += keyword
     print(f"getting e621 for '{ctx.message.author}' \nkeyword = {keyword}")
-    headers = {'User-Agent': 'cute152DiscordBot'}
     resp = requests.get(url, headers=headers)
     parsed = resp.json()
     posts = [x for x in parsed['posts'] if x['id']
@@ -118,6 +118,26 @@ async def e621(ctx, *args):
         await message.add_reaction(DELETE_EMOJI)  # add the delete reaction
     else:
         await ctx.send("No results.")
+
+@client.command(name="e621count",
+                description="Get the number of posts for an e621 tag/tags.")
+async def e6_count(ctx, *args):
+    url = "https://e621.net/tags.json?search[name_matches]="
+    headers = {'User-Agent': 'cute152DiscordBot'}
+    if (len(args) != 1):
+        await ctx.send("Give a single tag.")
+        return
+    url += html.escape(args[0])
+    print(f"getting e621 tag count for '{ctx.message.author}' \ntag = {args[0]}")
+    resp = requests.get(url, headers=headers)
+    parsed = resp.json()
+    if parsed == { "tags":[] }: # magic result for an invalid tag
+        await ctx.send("Couldn't find that tag.")
+        return
+    else:
+        await ctx.send(f"The tag '{args[0]}' has {parsed[0]['post_count']} posts.")
+
+
 
 
 @client.command(name="comments",
