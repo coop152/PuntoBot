@@ -1,5 +1,6 @@
 import asyncio
 from datetime import datetime
+from json import JSONDecodeError
 import random
 import html
 from os import getenv
@@ -102,7 +103,12 @@ async def e621(ctx, *args):
     url += keyword
     print(f"getting e621 for '{ctx.message.author}' \nkeyword = {keyword}")
     resp = requests.get(url, headers=headers)
-    parsed = resp.json()
+    try:
+        parsed = resp.json()
+    except JSONDecodeError:
+        print("Error while decoding json response. Response:\n")
+        print(resp)
+        await ctx.send("The API is broken! Send an improvised explosive device to Kyle's house to alert him of this extremely important issue.")
     posts = [x for x in parsed['posts'] if x['id']
              != client.previous_choice['id']]
     if posts:  # if list not empty
@@ -131,7 +137,7 @@ async def e6_count(ctx, *args):
     print(f"getting e621 tag count for '{ctx.message.author}' \ntag = {args[0]}")
     resp = requests.get(url, headers=headers)
     parsed = resp.json()
-    if parsed == { "tags":[] }: # magic result for an invalid tag
+    if parsed == {"tags": []}:  # magic result for an invalid tag
         await ctx.send("Couldn't find that tag.")
         return
     else:
