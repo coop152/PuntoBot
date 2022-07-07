@@ -22,7 +22,8 @@ class Generators(commands.Cog):
             if getters is None:
                 print("The image getting cog isnt loaded, something is broken")
             else:
-                await getters.e621(ctx, "typhlosion", "feraligatr", "order:score", "rating:explicit")
+                # getters will absolutely have this method, the typing is just being a bitch
+                await getters.e621(ctx, "typhlosion", "feraligatr", "order:score", "rating:explicit")  # type: ignore
             yiffgen.pogg_ing = False
 
     @commands.command(name="ship",
@@ -37,7 +38,8 @@ class Generators(commands.Cog):
             if getters is None:
                 print("The image getting cog isnt loaded, something is broken")
             else:
-                await getters.e621(ctx, "typhlosion", "feraligatr", "order:score", "rating:explicit")
+                # getters will absolutely have this method, the typing is just being a bitch
+                await getters.e621(ctx, "typhlosion", "feraligatr", "order:score", "rating:explicit")  # type: ignore
             yiffgen.pogg_ing = False
 
     @commands.command(name="forcepog",
@@ -48,5 +50,5 @@ class Generators(commands.Cog):
 
 
 # extension setup function
-def setup(bot: commands.Bot) -> None:
-    bot.add_cog(Generators(bot))
+async def setup(bot: commands.Bot) -> None:
+    await bot.add_cog(Generators(bot))

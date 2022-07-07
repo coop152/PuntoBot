@@ -46,5 +46,5 @@ class ErrorReporting(commands.Cog):
 
 
 # extension setup function
-def setup(bot: commands.Bot) -> None:
-    bot.add_cog(ErrorReporting(bot))
+async def setup(bot: commands.Bot) -> None:
+    await bot.add_cog(ErrorReporting(bot))

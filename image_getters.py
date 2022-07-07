@@ -2,11 +2,11 @@ import asyncio
 import html
 import random
 from json import JSONDecodeError
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 import discord.ext.commands as commands
 import requests
-from discord import Embed, Message, User, Reaction
+from discord import Embed, Member, Message, User, Reaction
 from rule34 import Rule34
 
 
@@ -30,9 +30,6 @@ class ImageGetters(commands.Cog):
                       description="Used by war criminals to procure cheese pizza. Used: r34 [keyword]")
     async def r34(self, ctx: commands.Context, *args: str) -> None:
         keyword = ' '.join(args)
-        if ctx.message is None:
-            # pylance insisted that i do this. for some reason the message attr of Context can be None
-            return
         print(
             f"getting rule34 for '{ctx.message.author}' \nkeyword = {keyword}")
         results = await self.rule34.getImages(keyword)
@@ -56,9 +53,6 @@ class ImageGetters(commands.Cog):
         url = "https://www.e621.net/posts.json?limit=100&tags="
         keyword = '+'.join([html.escape(arg) for arg in args])
         url += keyword
-        if ctx.message is None:
-            # pylance insisted that i do this. for some reason the message attr of Context can be None
-            return
         print(f"getting e621 for '{ctx.message.author}' \nkeyword = {keyword}")
         resp = requests.get(url, headers=self.REQUEST_HEADERS)
         try:
@@ -125,7 +119,7 @@ class ImageGetters(commands.Cog):
         }
         return Embed.from_dict(embed_as_dict)
 
-    def log_user_request(self, request_user: User, sent_message: Message) -> None:
+    def log_user_request(self, request_user: Union[User, Member], sent_message: Message) -> None:
         self.requests_log.append((request_user.id, sent_message.id))
 
     @commands.command(name="e621count",
@@ -134,9 +128,6 @@ class ImageGetters(commands.Cog):
         url = "https://e621.net/tags.json?search[name_matches]="
         if (len(args) != 1):
             await ctx.send("Give a single tag.")
-            return
-        if ctx.message is None:
-            # pylance insisted that i do this. for some reason the message attr of Context can be None
             return
         url += html.escape(args[0])
         print(
@@ -170,5 +161,5 @@ class ImageGetters(commands.Cog):
 
 
 # extension setup function
-def setup(bot: commands.Bot) -> None:
-    bot.add_cog(ImageGetters(bot))
+async def setup(bot: commands.Bot) -> None:
+    await bot.add_cog(ImageGetters(bot))
