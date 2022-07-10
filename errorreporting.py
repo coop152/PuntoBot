@@ -1,6 +1,8 @@
 from typing import Optional
 import discord.ext.commands as commands
+import os
 from discord.ext.commands import CommandNotFound
+from discord import File
 from datetime import datetime
 from traceback import print_exception, format_exception
 
@@ -36,9 +38,10 @@ class ErrorReporting(commands.Cog):
         else:
             ex = self.last_exception
             text = f"Exception from {self.exception_time}:"
-            text = "".join(format_exception(type(ex), ex, ex.__traceback__))
-            text = f"```py\n{text}\n```"
-            await ctx.send(text)
+            with open("traceback.txt", "w") as f:
+                f.write(''.join(format_exception(type(ex), ex, ex.__traceback__)))
+            await ctx.send(text, file=File("traceback.txt"))
+            os.remove("traceback.txt")
 
     # @commands.command(name="debugerror", description="Purposefully create a ValueError. For debugging.")
     # async def error_on_purpose(self, ctx):
