@@ -18,13 +18,7 @@ class SmashOrPass(commands.Cog):
 
     # @profile
     def get_deets(self, name_or_id: Union[str, int]) -> Embed:
-        # pokemon = pokebase.APIResource("pokemon", name_or_id)
         pokemon = pokebase.pokemon(name_or_id)
-        # return {
-        #     "name": pokemon.name,
-        #     "desc": [x for x in pokemon.species.flavor_text_entries if x.language.name == "en"][0].flavor_text,
-        #     "sprite": pokemon.sprites.other.__getattribute__("official-artwork").front_default
-        # }
         fixed_desc: str = [
             x for x in pokemon.species.flavor_text_entries if x.language.name == "en"][0].flavor_text
         fixed_desc = fixed_desc.replace(u"\f", u"\n") \
