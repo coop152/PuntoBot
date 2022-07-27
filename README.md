@@ -20,5 +20,4 @@ These modules are:
 - **Discord.py 2.0** - Discord bot API
 - **python-dotenv** - Used to allow bot token storage in both environment variables (for Heroku) and in a file (for local development)
 - **rule34** - Search for posts on rule34
-- **requests** - Make requests to the e621 api
-- **pokebase** - Make requests to PokeAPI, for the pokesmash or pass game
+- **requests** - Make requests to the e621 api and pokeAPI
