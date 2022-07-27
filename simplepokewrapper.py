@@ -1,5 +1,5 @@
 from requests import get
-from typing import Optional, Union
+from typing import Union
 import psycopg2
 from json import loads
 
