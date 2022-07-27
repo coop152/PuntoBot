@@ -105,7 +105,7 @@ class SmashOrPass(commands.Cog):
             return
         game_msg: discord.Message = await ctx.send(f"{ctx.message.author}'s Game")
         self.active_games[player_id] = SmashGameState(game_msg, {})
-        for pokenum in [12, 98, 199, 635, 21]:
+        for pokenum in [25, 25, 25, 25, 25]:
             if not await self.update_game(player_id, pokenum):
                 break
         temp_results_for_testing = self.active_games[player_id].decisions

@@ -2,6 +2,7 @@ from requests import get
 from typing import Union
 import psycopg2
 from json import loads
+from random import choice
 
 
 class PokeWrapper():
@@ -43,9 +44,9 @@ class PokeWrapper():
         return self.access("https://pokeapi.co/api/v2/pokemon-species/", name_or_id)
 
     def all_details(self, name_or_id: Union[str, int]) -> Union[dict, None]:
-        poke = self.pokemon(name_or_id)
-        if poke is None:
-            return None
+        # poke = self.pokemon(name_or_id)
+        # if poke is None:
+        #     return None
         spec = self.species(name_or_id)
         if spec is None:
             return None
@@ -53,10 +54,15 @@ class PokeWrapper():
                    if x['language']['name'] == "en"][0]  # fucking lmao, nice api nerd
         desc = [x for x in spec['flavor_text_entries']
                 if x['language']['name'] == "en"][0]['flavor_text']
-        sprite_url = poke['sprites']['other']['official-artwork']['front_default']
+        # sprite_url = poke['sprites']['other']['official-artwork']['front_default']
+        temp_name = choice(spec['varieties'])['pokemon']['name']
+        poke = self.pokemon(temp_name)
+        if poke is None:
+            return None
         return {
             "id": spec['id'],
             "name": en_name,
             "pokedex": desc,
-            "sprite": sprite_url
+            # "sprite": sprite_url
+            "sprite": f"https://raw.githubusercontent.com/coop152/PuntoBot/smashypassy/official-artwork/{poke['id']}.png"
         }
