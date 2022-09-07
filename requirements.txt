@@ -1,4 +1,4 @@
 python-dotenv
-discord.py
+git+https://github.com/Rapptz/discord.py
 rule34
 requests

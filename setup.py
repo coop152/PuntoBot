@@ -20,7 +20,7 @@ class Setup(commands.Cog):
             url="https://pbs.twimg.com/profile_images/1315716250706882563/Z1eDpiVY_400x400.jpg")
         for command in self.bot.commands:
             if not command.hidden:
-                help_message.add_field(name=self.bot.command_prefix + command.name,
+                help_message.add_field(name=str(self.bot.command_prefix) + command.name,
                                        value=command.description if command.description else "[no description added]",
                                        inline=False)
         await ctx.send(embed=help_message)
@@ -31,11 +31,17 @@ class Setup(commands.Cog):
         await self.bot.change_presence(activity=Game(name="gaming, like a boss"))
         if self.bot.user:  # if bot has a user account
             print("Logged in as " + self.bot.user.name)
+            print("Loaded extensions:")
+            for extension in self.bot.extensions:
+                print("\t- " + extension)
+            print("Loaded cogs:")
+            for cog in self.bot.cogs:
+                print("\t- " + cog)
         else:
             print("The bot doesn't have a user account. Something has gone wrong.")
 
 
 # extension setup function
-def setup(bot: commands.Bot) -> None:
+async def setup(bot: commands.Bot) -> None:
     bot.remove_command("help")
-    bot.add_cog(Setup(bot))
+    await bot.add_cog(Setup(bot))

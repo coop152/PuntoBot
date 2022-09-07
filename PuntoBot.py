@@ -1,15 +1,26 @@
 from os import getenv
+from discord import Intents
 
 from discord.ext.commands import Bot
 from dotenv import load_dotenv
 
-PREFIX = "=="
+PREFIX = "??"
 load_dotenv()
 TOKEN = getenv('DISCORD_TOKEN')
 
-bot = Bot(command_prefix=PREFIX)
-bot.load_extension("setup")
-bot.load_extension("errorreporting")
-bot.load_extension("image_getters")
-bot.load_extension("generators")
-bot.run(TOKEN)
+
+class PuntoBot(Bot):
+    async def setup_hook(self) -> None:
+        await bot.load_extension("setup")
+        await bot.load_extension("errorreporting")
+        await bot.load_extension("image_getters")
+        await bot.load_extension("generators")
+        await super().setup_hook()
+
+
+if TOKEN is None:
+    print("The token isn't in .env or the environment variables.\nAdd it with the name 'DISCORD_TOKEN'.")
+else:
+    # idk how intents work LMAO!!!!!
+    bot = PuntoBot(command_prefix=PREFIX, intents=Intents.all())
+    bot.run(TOKEN)
