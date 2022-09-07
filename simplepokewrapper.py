@@ -3,6 +3,7 @@ from typing import Union
 import psycopg2
 from json import loads
 from random import choice
+import regex
 
 
 class PokeWrapper():
@@ -43,26 +44,25 @@ class PokeWrapper():
     def species(self, name_or_id: Union[str, int]) -> Union[dict, None]:
         return self.access("https://pokeapi.co/api/v2/pokemon-species/", name_or_id)
 
-    def all_details(self, name_or_id: Union[str, int]) -> Union[dict, None]:
-        # poke = self.pokemon(name_or_id)
-        # if poke is None:
-        #     return None
-        spec = self.species(name_or_id)
+    def species_details(self, species_identifier: Union[str, int]) -> list[dict]:
+        spec = self.species(species_identifier)
         if spec is None:
-            return None
+            return []
         en_name = [x['name'] for x in spec["names"]
                    if x['language']['name'] == "en"][0]  # fucking lmao, nice api nerd
         desc = [x for x in spec['flavor_text_entries']
                 if x['language']['name'] == "en"][0]['flavor_text']
-        # sprite_url = poke['sprites']['other']['official-artwork']['front_default']
-        temp_name = choice(spec['varieties'])['pokemon']['name']
-        poke = self.pokemon(temp_name)
-        if poke is None:
-            return None
-        return {
-            "id": spec['id'],
-            "name": en_name,
-            "pokedex": desc,
-            # "sprite": sprite_url
-            "sprite": f"https://raw.githubusercontent.com/coop152/PuntoBot/smashypassy/official-artwork/{poke['id']}.png"
-        }
+        all_pokemon: list[dict] = []
+        for variety in spec['varieties']:
+            match = regex.match(
+                "https:\\/\\/pokeapi.co\\/api\\/v2\\/pokemon\\/(\\d+)\\/", variety['pokemon']['url'])
+            if match is None:
+                continue
+            id = match.group(1)
+            all_pokemon.append({
+                "id": id,
+                "name": en_name,
+                "pokedex": desc,
+                "sprite": f"https://raw.githubusercontent.com/coop152/PuntoBot/smashypassy/official-artwork/{id}.png"
+            })
+        return all_pokemon

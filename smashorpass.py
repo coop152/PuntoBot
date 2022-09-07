@@ -11,7 +11,7 @@ from simplepokewrapper import PokeWrapper
 # TODO: remember to start using the db
 
 # TODO: STOP JUST USING THE ID TO ACCESS POKEMON DIRECTLY!!!!!! use the numbers to pick a random species, then add EVERY SINGLE VARIETY
-# TODO: TO THE LIST OF POKEMON!!! For example: 
+# TODO: TO THE LIST OF POKEMON!!! For example:
 # randomly chosen SPECIES: lycanroc, spearow, fearow, charizard, pikachu
 # randomly chosen POKEMON: lycanroc-midday, lycanroc-dusk, lycanroc-midnight, spearow, fearow, charizard, charizard mega x, charizard mega y, gmax charizard, pikachu, pikachu costumes, pikachu caps (???), gmax pikachu
 
@@ -55,7 +55,8 @@ class SmashOrPassView(discord.ui.View):
 @dataclass
 class SmashGameState:
     message: discord.Message  # the message for this player's game
-    decisions: dict[int, bool] = field(default_factory=dict)  # dict of smashes/passes. e.g. {3: True, 9: False}
+    # dict of smashes/passes. e.g. {3: True, 9: False}
+    decisions: dict[int, bool] = field(default_factory=dict)
 
 
 class SmashOrPass(commands.Cog):
@@ -69,11 +70,11 @@ class SmashOrPass(commands.Cog):
         self.api = PokeWrapper(db_url)
 
     # @profile
-    def get_deets(self, name_or_id: Union[str, int]) -> Optional[discord.Embed]:
-        resp = self.api.all_details(name_or_id)
-        if resp is None:
-            return None
-        fixed_desc = resp['pokedex'].replace(u"\f", u"\n") \
+    def make_embed(self, pokemon: dict, first: bool) -> discord.Embed:
+        '''
+        argument `pokemon` is one of the dicts returned from PokeWrapper.species_details.
+        '''
+        fixed_desc = pokemon['pokedex'].replace(u"\f", u"\n") \
             .replace(u'\u00ad\n', u'') \
             .replace(u'\u00ad', u'') \
             .replace(u' -\n', u' - ') \
@@ -81,11 +82,12 @@ class SmashOrPass(commands.Cog):
             .replace(u'\n', u' ')
         return discord.Embed.from_dict({
             "type": "rich",
-            "title": "Smash or Pass?",
-            "description": f"#{resp['id']} - {resp['name']}",
+            "title": "Smash or Pass?" if first else "How about this one?",
+            # changes the title for follow-ups
+            "description": f"#{pokemon['id']} - {pokemon['name']}",
             "color": 0xFF0000,
             "image": {
-                "url": resp['sprite'],
+                "url": pokemon['sprite'],
                 "height": 0,
                 "width": 0
             },
@@ -105,9 +107,10 @@ class SmashOrPass(commands.Cog):
             return
         game_msg: discord.Message = await ctx.send(f"{ctx.message.author}'s Game")
         self.active_games[player_id] = SmashGameState(game_msg, {})
-        for pokenum in [25, 25, 25, 25, 25]:
-            if not await self.update_game(player_id, pokenum):
+        for species in ["pikachu"]:
+            if not await self.update_game(player_id, species):
                 break
+        # TODO: store the results
         temp_results_for_testing = self.active_games[player_id].decisions
         self.active_games.pop(player_id)
         await game_msg.edit(content=f"results:{temp_results_for_testing}", embed=None, view=None)
@@ -120,21 +123,30 @@ class SmashOrPass(commands.Cog):
         self.active_games.pop(ctx.message.author.id)
         await ctx.send("Stopped your game.")
 
-    async def update_game(self, player_id: int, pokenum: int) -> bool:
-        new_embed = self.get_deets(pokenum)
+    async def update_game(self, player_id: int, species_identifier: Union[int, str]) -> bool:
+        ''' Does a single iteration of the game. Takes a species identifier (id or name) and does every pokemon in that species.
+        e.g. for species == 706 or species == "goodra", do pokemon goodra and goodra-hisui.
+        The IDs used to save the response should be POKEMON IDs, NOT SPECIES IDs!!! So that the response for each form can be stored.
+
+        returns True if turn was successful, False if game was cancelled or timed out.
+        '''
+        all_pokemon = self.api.species_details(species_identifier)
         game_msg = self.active_games[player_id].message
-        if new_embed is None:
+        if all_pokemon == []:
             await game_msg.edit(content="The API isn't working right now!")
             return False
         else:
-            smash_view = SmashOrPassView(player_id)
-            await game_msg.edit(embed=new_embed, view=smash_view)
-            await smash_view.wait()
-            if smash_view.choice == None:  # timeout or cancelled game
-                return False
-            else:
-                self.active_games[player_id].decisions[pokenum] = smash_view.choice
-                return True
+            first = True
+            for pokemon in all_pokemon:
+                smash_view = SmashOrPassView(player_id)
+                await game_msg.edit(embed=self.make_embed(pokemon, first), view=smash_view)
+                first = False
+                await smash_view.wait()
+                if smash_view.choice is None:  # timeout or cancelled game
+                    return False
+                else:
+                    self.active_games[player_id].decisions[pokemon['id']] = smash_view.choice
+            return True  # only return a success when all pokemon are 
 
 
 # extension setup function
