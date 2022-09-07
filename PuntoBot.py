@@ -4,7 +4,7 @@ from discord import Intents
 from discord.ext.commands import Bot
 from dotenv import load_dotenv
 
-PREFIX = "??"
+PREFIX = "=="
 load_dotenv()
 TOKEN = getenv('DISCORD_TOKEN')
 
