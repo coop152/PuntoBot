@@ -1,5 +1,5 @@
 import asyncio
-import html
+import urllib.parse
 import random
 from json import JSONDecodeError
 from typing import List, Tuple, Union
@@ -7,7 +7,10 @@ from typing import List, Tuple, Union
 import discord.ext.commands as commands
 import requests
 from discord import Embed, Member, Message, User, Reaction
+from discord.utils import escape_markdown
 from rule34 import Rule34
+
+safequote = lambda *args, **kwargs: urllib.parse.quote(*args, **kwargs, safe="")
 
 
 class ImageGetters(commands.Cog):
@@ -25,6 +28,7 @@ class ImageGetters(commands.Cog):
         self.bot = bot
         self.previous_id = -1
         self.requests_log = []
+
 
     @commands.command(name="r34",
                       description="Used by war criminals to procure cheese pizza. Used: r34 [keyword]")
@@ -51,9 +55,9 @@ class ImageGetters(commands.Cog):
                       description="Used by furbys to procure cheese graters. Used: e621 [keyword(s)]")
     async def e621(self, ctx: commands.Context, *args: str) -> None:
         url = "https://www.e621.net/posts.json?limit=100&tags="
-        keyword = '+'.join([html.escape(arg) for arg in args])
-        url += keyword
-        print(f"getting e621 for '{ctx.message.author}' \nkeyword = {keyword}")
+        query_string = '+'.join([safequote(arg) for arg in args])
+        url += query_string
+        print(f"getting e621 for '{ctx.message.author}' \nkeywords = {args}")
         resp = requests.get(url, headers=self.REQUEST_HEADERS)
         try:
             parsed = resp.json()
@@ -94,7 +98,7 @@ class ImageGetters(commands.Cog):
         embed_as_dict = {
             "type": "rich",
             "title": f"{title_name} Link",
-            "description": "**You searched for:** " + ' '.join([html.escape(tag) for tag in tags]),
+            "description": "**You searched for:** " + ' '.join([escape_markdown(tag) for tag in tags]),
             "color": 0xfdb328,
             "fields": [
                 {
@@ -129,7 +133,7 @@ class ImageGetters(commands.Cog):
         if (len(args) != 1):
             await ctx.send("Give a single tag.")
             return
-        url += html.escape(args[0])
+        url += safequote(args[0])
         print(
             f"getting e621 tag count for '{ctx.message.author}' \ntag = {args[0]}")
         resp = requests.get(url, headers=self.REQUEST_HEADERS)
