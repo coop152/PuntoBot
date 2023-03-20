@@ -13,7 +13,7 @@ class AIChatbot(commands.Cog):
     @commands.command(name="chatgpt",
                       description="Call upon the Magic Of AI:tm: to recieve answers")
     async def generate(self, ctx: commands.Context):
-        if len(ctx.message.content) > 200:
+        if len(ctx.message.content) > 500:
             await ctx.send("Using the openAI API costs me per token. use less words loser")
             return
         user_msg = {"role": "user", "content": f"{ctx.author.mention}: {ctx.message.content}"}
