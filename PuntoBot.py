@@ -4,7 +4,7 @@ from discord import Intents
 from discord.ext.commands import Bot
 from dotenv import load_dotenv
 
-PREFIX = "=="
+PREFIX = "??"
 load_dotenv()
 TOKEN = getenv('DISCORD_TOKEN')
 
@@ -15,6 +15,7 @@ class PuntoBot(Bot):
         await bot.load_extension("errorreporting")
         await bot.load_extension("image_getters")
         await bot.load_extension("generators")
+        await bot.load_extension("ai_chatbot")
         await super().setup_hook()
 
 
